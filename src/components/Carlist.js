@@ -6,6 +6,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
 import AddCar from './AddCar';
+import EditCar from './EditCar';
 
 export default function Carlist () {
 
@@ -52,23 +53,43 @@ export default function Carlist () {
         })
 		.then(response => getCars())
 		.catch(err => console.error(err))
-    }
+	}
+	
+	const updateCar = (link, car) => {
+		fetch(link, {
+			method: 'PUT',
+			headers: {
+				'Content-type' : 'application/json'
+			},
+			body: JSON.stringify(car)
+		})
+		.then(response => getCars())
+		.catch(err => console.error(err))
+	}
 
     const columns = [
         {field: 'brand', sortable: true, filter: true},
         {field: 'model', sortable: true, filter: true},
         {field: 'color', sortable: true, filter: true},
         {field: 'fuel', sortable: true, filter: true},
-        {field: 'year', sortable: true, filter: true},
-        {field: 'price', sortable: true, filter: true},
-            {
-                field: '_links.self.href',
-                headerName: '',
-                width: 90,
-                cellRendererFramework: params => <IconButton color='secondary' onClick={() => deleteCar(params)}>
-                    <DeleteIcon fontSize='small'/>
-                    </IconButton>
-            }
+        {field: 'year', sortable: true, filter: true, width: 100},
+        {field: 'price', sortable: true, filter: true, width: 100},
+		{
+			headerName: '',
+			width: 100,
+			field: '_links.self.href',
+			cellRendererFramework: params =>
+				<EditCar updateCar={updateCar} params={params}/>
+		},
+		{
+			field: '_links.self.href',
+			headerName: '',
+			width: 90,
+			cellRendererFramework: params =>
+				<IconButton color='secondary' onClick={() => deleteCar(params)}>
+					<DeleteIcon fontSize='small'/>
+				</IconButton>
+		}
     ]
 
 
@@ -77,7 +98,7 @@ export default function Carlist () {
 
         <div>
             <AddCar addCar={addCar}/>
-            <div className="ag-theme-material" style={ { height: 700, width: '60%', margin: 'auto' } }>
+            <div className="ag-theme-material" style={ { height: 700, width: '50%', margin: 'auto' } }>
                 <AgGridReact
                     rowData={cars}
                     columnDefs={columns}
