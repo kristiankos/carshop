@@ -42,6 +42,18 @@ export default function Carlist () {
     }
     }
 
+    const addCar = (newCar) => {
+        fetch('https://carstockrest.herokuapp.com/cars/', {
+			method: 'POST',
+			headers: {
+				'Content-type' : 'application/json'
+			},
+			body: JSON.stringify(newCar)
+        })
+		.then(response => getCars())
+		.catch(err => console.error(err))
+    }
+
     const columns = [
         {field: 'brand', sortable: true, filter: true},
         {field: 'model', sortable: true, filter: true},
@@ -64,7 +76,7 @@ export default function Carlist () {
 
 
         <div>
-            <AddCar />
+            <AddCar addCar={addCar}/>
             <div className="ag-theme-material" style={ { height: 700, width: '60%', margin: 'auto' } }>
                 <AgGridReact
                     rowData={cars}
